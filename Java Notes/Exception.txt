@@ -1,0 +1,347 @@
+Exception
+
+	java.lang.Object
+		java.lang.Throwable
+			java.lang.Exception
+All Implemented Interfaces:
+Serializable
+
+Throwable Class : 
+Defined in java.lang package.
+It is a root of exception hierarchy, Superclass of all exceptions and errors in Java.
+Provides methods like getMessage(), printStackTrace(), and toString() to print the exception information to the console.
+
+1. getMessage() - this method returns only description of the exception.
+2. printStackTrace() - prints exception information in following format - name of exception, description of exception
+3. toString() - this method prints exception information in following format - name of exception, description of exception.
+
+
+						Throwable (Class)
+							|
+              _______________________________________________
+	      |                                                                                                    |
+       Exception (Recoverable)								Error (Unrecoverable)
+		                 |										             |
+         __________________________                                              _______________
+        |						         |					       |                               |
+Checked Exception		          Unchecked Exception                      JVM Errors	       System Errors
+(Compile-time Exception)		   (Runtime Exception)
+(Must be handled)		            (no need to handle)
+
+
+1. Exception Class :
+	Represents recoverable conditions in a program.
+	Can be handled using try-catch or throws.
+	It is highly recommended to handle exceptions. The main objective of exception handling is normal termination of the program.
+
+Exception Handling :
+	Exception handling is the alternative way to continue rest of the program normally. This way of defining alternative is nothing but exception handling.
+		1. If an exception raised inside any method then that method is responsible to create Exception object with the following information.
+			Name of the exception.
+			Description of the exception.
+			Location of the exception.(StackTrace)
+		2. After creating that Exception object, the method handovers that object to the JVM.
+		3. JVM checks whether the method contains any exception handling code or not. If method won't contain any handling code then JVM terminates that method abnormally 
+
+
+
+Two types:
+	Checked Exceptions (compile-time)
+	Unchecked Exceptions (runtime)
+
+(a) Checked Exceptions
+	Occur during compile time. 
+	Compiler forces the programmer to handle them
+	Must be handled using try-catch or throws.
+
+Examples:
+	IOException
+	SQLException
+	ClassNotFoundException
+	InterruptedException
+
+(b) Unchecked Exceptions (Runtime Exceptions)
+	Occur during runtime.
+	Not required to handle explicitly.
+	they usually indicate programmers mistakes
+Note : RuntimeException and its child classes, Error and its child classes are unchecked and all the remaining are considered as checked exceptions.
+
+
+Examples:
+	NullPointerException - accessing methods on null objects
+	ArrayIndexOutOfBoundsException - accessing an invalid array index
+	ArithmeticException - division by zero
+	IllegalArgumentException
+
+2. Error Class :
+	Represents serious and unrecoverable issues .
+	Cannot be handled by the program.
+	Caused by JVM failures, hardware issues, or system-level errors.
+
+Examples:
+	StackOverflowError - infinite recursion
+	OutOfMemoryError -  JVM runs out of memory
+	VirtualMachineError
+	AssertionError
+
+try Block :
+	Contains code that might throw an exception. Also called as risky code.
+	If something goes wrong, then flow goes to catch block.
+	If no exception occurs, catch is skipped, and finally (if present) executes.
+
+catch Block:
+	1. Catches and handles exceptions.
+	2. You can have multiple catch blocks to handle different exceptions with a single try block. It is always recommended.
+	3. general exception catch block will always be at the end otherwise all the catch blocks will be unreachable and it wont be caught and exception will be thrown. So the order of catch block should be child to parent exception.
+	4. technically we can catch an Error using a catch block in Java, because Error is a subclass of Throwable — just like Exception. But attempting to recover from an Error can be risky or meaningless, because the JVM may be in an unstable state.
+
+multi-catch block : (Java 7)
+	We can also have multi-catch which allows us to catch multiple exceptions in a single catch block using | (pipe operator). It is useful when different exceptions have similar handling logic.
+	Note : 
+		the exception types should not be related by inheritance.
+			E.g. 
+			catch (IOException | SQLException e) {
+   			 e.printStackTrace();
+			}
+
+finally Block (Optional) :
+	1. Always executes, whether an exception is thrown or not.
+	2. It is used for closing database connections/files and releasing locks etc
+	3. finally does NOT execute if JVM exits (System.exit()). It is the only situation when finally block will not be executed.
+
+Rules for using try-catch-finally together:
+	1. try must be followed by either catch or finally
+	2. catch and finally cannot exist on their own
+	3. You can nest try-catch blocks
+	4. Curly braces {} are mandatory
+	5. try catch finally order must be followed
+
+finally with return :
+	1. If both return and finally exist, the finally block still executes. 
+	2. If there’s a return in the finally block as well, it overrides the earlier return. So we have to be careful with return values in methods that use finally blocks.
+
+try-with-resources (Java 7)
+	It is introduced because compulsory we need to write finally block which increase line of code as we need to close all the open resource otherwise it would lead to resource leak.
+	1. try-with-resources lets us manage resources like files and streams automatically. 
+	2. If we use it, we don’t need to manually close resources in finally block. For it to work, the resource must implement AutoCloseable Interface.
+		E.g.
+		try (BufferedReader br = new BufferedReader(new FileReader("data.txt"))) {
+    			System.out.println(br.readLine());
+		}
+
+Try-Catch-Finally Cases:
+	1. If no exception happens → try runs completely → then finally
+	2. If an exception occurs and is caught → try runs till exception → catch 		executes → then finally
+	3. If an exception occurs and is not caught → try runs till exception → 			finally executes → program crashes
+If an exception occurs inside catch or finally, then the most recently thrown exception is what the JVM considers.
+
+Throws (keyword) :
+	1. Used to handle compile time exception.
+	2. Throws keyword in java is used in a method declarations/constructor to declare that the method might throw a particular exception
+	3. it does not handle the exception but informs the caller that they must handle it.
+
+	e.g.	returnType methodName(parameters) throws ExceptionType
+		{
+			//code that may throw the exception
+		}
+
+Throw (keyword) :
+	1. Throw keyword is actually used to throw an Exception object explicitly by programmer.
+		E.g.
+		if(b == 0)
+			throw new ArithmeticException("Div by zero");
+		else
+			return a/b;
+	2. in a similar manner, we can throw user define exception
+	throw new MyException("Excption Thrown");
+	3. We can't write any code after throw because it makes the next statement unreachable
+Note :  in practice, we generally use throw for custom (user-defined) exceptions. This is because: Predefined exceptions are thrown automatically by JVM, but custom exceptions are thrown explicitly by developers
+
+Custom Exceptions :
+	1. We create custom exception when built-in exceptions logic don't represent the exact business issue.
+	2. Custom exceptions help provide meaningful error messages.
+	3. You can create your own exceptions by extending Exception or RuntimeException and handling it in 
+	4. Use extends Exception for checked exceptions, or extends RuntimeException for unchecked 
+	5. Always use try-catch or throws to handle or propagate custom exceptions.exceptions.
+
+GlobalException Class.
+		E.g.
+		public class InvalidAgeException extends Exception {
+  		  public InvalidAgeException(String message) {
+      			  super(message);
+  			 }
+		}
+	and then throw it based on business rules like age < 18
+
+Global Exception Handling :
+	@ControllerAdvice (Class level annotation)
+	@ExceptionHandler(exception = Exception.class)  (method level annotation)
+
+	1. A global Exception handler is a centralized way to handle exceptions across an entire application instead of handling the individually with try-catch block in different places.
+	2. useful in large application like SpringBoot, Web App, Multithreaded app, where we want common error handler mechanism.
+	3. here we can return custom response object instead of plain strings and we can also add timestamp, path errorCode etc for better debugging.
+
+
+Difference Between Final, Finally & Finalize :
+Final : 
+	1. final is the modifier applicable for classes, methods and variables.
+	2. If a class declared as the final then child class creation is not possible.
+	3. If a method declared as the final then overriding of that method is not possible.
+	4. If a variable declared as the final then reassignment is not possible.
+
+Finally : 
+	1. finally is the block always associated with try-catch to maintain clean up code which should be executed always irrespective of whether exception raised or not raised and whether handled or not handled.
+
+Finalize :
+	It is a method that is always executed by garbage collector just before destroying an object to perform clean-up activities.
+
+Note : 
+	1. finally block is meant to clean-up activities related to try block; finalize method for clean-up activities related to object. 
+	2. To maintain clean-up code finally block is preferred over finalize() method as we can't predict the behaviour of garbage collector.
+
+try {}
+catch (X e) {}
+----------------------
+try {}
+catch (X e) {}
+catch (Y e) {}
+----------------
+try {}
+catch (X e) {}
+catch (X e) {} //CE:exception ArithmeticException has already been caught
+---------------------
+try {}
+catch (X e) {}
+finally {}
+---------------------
+try {}
+finally {}
+-------------------------
+try {} //CE: 'try' without 'catch', 'finally' or resource declarations
+-----------------------------
+catch (X e) {} //CE: 'catch' without 'try'
+----------------------------------------------
+try {}
+catch (X e) {}
+catch (Y e) {} 
+------------------------------------------
+try {}
+catch (X e) {}
+System.out.println("Hello");
+finally {} //CE: 'finally' without 'try'
+------------------------------
+try {}
+finally {}
+catch (X e) {} //CE: 'catch' without 'try'
+----------------------------------------
+try {}
+catch (X e) {}
+try {}
+finally {}
+-----------------------
+try {}
+catch (X e) {}
+finally {}
+finally {} //CE: 'finally' without 'try'
+-----------------------------------------
+try {}
+catch (X e) {
+try {}
+catch (Y e1) {}
+}
+--------------------------------
+try {}
+catch (X e) {}
+finally {
+try {}
+catch (Y e1) {}
+finally {}
+}
+--------------------------------------
+try {
+try {} 
+}
+catch (X e) {}
+-----------------------------------------------------
+try //CE: '{' expected
+System.out.println("Hello");
+catch (X e1) {} //CE: 'catch' without 'try'
+------------------------------------------------
+try {}
+catch (X e) //CE:'{' expected
+System.out.println("Hello");
+----------------------------------------------
+try {}
+catch (NullPointerException e1) {}
+finally //CE: '{' expected
+System.out.println("Hello");
+---------------------------------------------
+
+•	NullPointerException: Occurs when you try to use a null reference.
+•	ArrayIndexOutOfBoundsException: Accessing array element outside its bounds.
+•	ArithmeticException: Division by zero.
+•	IOException: Input/output operations failed.
+•	FileNotFoundException: Trying to read a file that doesn’t exist.
+•	SQLException: Errors while working with the database.
+•	StackOverflowError: Infinite recursive calls.
+•	OutOfMemoryError: When JVM runs out of heap memory.
+•	NoClassDefFoundError: JVM cannot find the required .class file.
+
+
+Questions :
+
+1. What is the difference between Exception and Error?
+2. What are Checked and Unchecked Exceptions?
+3. What is the difference between throw and throws?
+4. What is finally block in Java?
+5. Can we have multiple catch blocks?
+
+6. Can we write try without catch?
+	yes but must have finally block
+
+7. What is the difference between getMessage() and printStackTrace()?
+	getMessage()	Returns the exception message.
+	printStackTrace()	Prints the full stack trace of the exception.
+
+8. What is Custom Exception?
+9. What is Global Exception Handling?
+
+10. Can we handle errors using try-catch?
+	No, errors (OutOfMemoryError, StackOverflowError) are system-level issues and cannot be recovered.
+
+11. What is the difference between Exception and RuntimeException?
+	Exception (Checked)	      RuntimeException (Unchecked)
+
+12. What is try-with-resources?
+	Automatically closes resources after try block execution.
+
+13. What happens if an exception is thrown in finally?
+	If finally throws an exception, it overrides any exception from try-catch.
+
+
+15. How does Spring Boot handle exceptions globally?
+Using @ControllerAdvice and @ExceptionHandler to centralize exception handling.
+
+16. Can we catch multiple exceptions in a single catch block?
+Yes, using a pipe (|).
+
+17. What happens if an exception occurs inside a catch block?
+	If a new exception occurs, it will override the original exception.
+	Use a nested try-catch inside catch to prevent this.
+
+18. What is the purpose of getCause() in exceptions?
+	Retrieves the root cause of an exception.
+
+14.	How can you increase JVM memory? (Use -Xms and -Xmx flags)
+	You can increase JVM memory by setting the initial and maximum heap size using the -Xms and -Xmx flags when starting your Java application:
+	-Xms512m: Sets the initial heap size to 512 MB.
+	-Xmx1024m: Sets the maximum heap size to 1024 MB (1 GB).
+
+How to handle exception?
+
+Which annotation is used to handle exception globally?
+
+How do you handle exceptions globally in Spring Boot applications?
+
+What logging frameworks do you use? How do you manage logging in production?
+

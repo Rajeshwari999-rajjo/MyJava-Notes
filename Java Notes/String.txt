@@ -1,0 +1,168 @@
+String :
+
+public final class String
+extends Object
+implements Serializable, Comparable<String>, CharSequence
+
+A String in Java is a sequence of characters stored as an immutable object. It is part of the java.lang package.
+
+String Class :  (java.lang.String) (final)
+Immutable: Once a String is created, its value cannot be changed.
+Stored in the String Constant Pool: Optimizes memory by reusing existing string objects.
+Thread-safe: Since String is immutable, multiple threads can safely use it.
+Performance issue: Frequent modifications create new objects, making it slower for repeated operations.
+
+Intern Method: 
+By using heap object reference, if we want to get corresponding SCP object , then we should go for intern() method.
+The intern() method forces a String to be stored in the String Pool.
+	String s1 = new String("Hello");
+	String s2 = s1.intern();
+	String s3 = "Hello";
+	System.out.println(s2 == s3);  // true (both refer to the same pool object)
+
+StringBuffer vs StringBuilder:
+Both StringBuffer and StringBuilder are mutable classes in Java, meaning they allow modifications without creating new objects. However, they differ in thread safety and performance.
+
+StringBuffer
+→ java.lang.StringBuffer class: Thread-safe (synchronized) - only one/single thread can access at a time to it (object/instance of StringBuffer class)
+Thread-safe: Methods are synchronized, ensuring safe modifications in multi-threaded applications.
+Slower than StringBuilder due to synchronization overhead.
+Use case: When working with multiple threads that modify the same string.
+
+StringBuilder
+→ java.lang.StringBuilder class: Not thread-safe (not synchronized) - multiple threads can access at a time to it (object/instance of StringBuilder class)
+Not thread-safe: No synchronization, making it faster than StringBuffer.
+Recommended for single-threaded applications where performance is critical.
+Use case: When string modifications happen frequently in a single-threaded environment.
+
+1. If the content is fixed and won't change frequently then we should go for String. 
+2. If the content will change frequently but Thread safety is required then we should go for StringBuffer.
+3. If the content will change frequently and Thread safety is not required then we should go for StringBuilder.
+4- .equal method in String class is override but not in buffer and builder
+
+Questions:
+
+■ Question: 1. Why is String immutable in Java?
+	Security reasons (e.g., String used in class loading, hashing, etc.).
+	Thread safety (immutable objects are inherently thread-safe).
+	String pool optimization (avoiding duplicate objects).
+
+■ Question: 2. What is the String constant pool?
+	The String pool is a special area in the heap where Java stores String literals.
+	This optimizes memory usage by avoiding duplicate String objects.
+
+■ Question: 3. How does String interning work in Java?
+
+■ Question: 4. How does StringBuffer ensure thread safety?
+StringBuffer methods are synchronized, preventing multiple threads from modifying the same object simultaneously.
+
+■ Question: 5. What happens when a StringBuilder exceeds its capacity?
+StringBuilder has an initial capacity (default: 16 characters).
+If exceeded, it doubles its capacity +2.
+	newCapacity = (oldCapacity * 2) + 2  //+2 adds small buffer before re-expansion
+🟥 Maintains character array internally.🟥
+
+Differentiate between String, StringBuilder, and StringBuffer.
+
+■ Question: 6. What is a String in Java? Is it a primitive data type?
+Answer:
+→ A String in Java represents a sequence of characters.
+→ It is an object of the java.lang.String class, not a primitive data type.
+
+■ Question 7. Explain why String objects are immutable in Java.
+Answer:
+→ Once a String object is created, its content cannot be changed.
+→ This immutability offers several advantages:
+(1) Security (General): Prevents unintended modifications in sensitive data.
+(2) Thread Safety (Multithreading): Multiple threads can safely access and share String objects without the risk of data corruption.
+(3) Caching (Memory Management): String literals can be cached in the String pool, improving performance and memory usage.
+(4) Usage as Keys (Collection Framework): Immutable objects are ideal for use as keys in HashMap and HashSet as their hash code remains constant.
+
+■ Question 8. What is the String pool (or String intern pool)? How does it work?
+Answer:
+→ The String pool is a special memory area in the Java heap that holds unique String literals.
+→ When a String literal is created (e.g., "hello"), the JVM first checks if a String with the same value already exists in the pool.
+→ If it exists, the reference to the existing String object is returned.
+→ If it doesn't exist, a new String object is created in the pool, and its reference is returned.
+→ The String.intern() method can be used to explicitly put a String object into the pool or retrieve an existing one.
+
+■ Question 9. How do you create String objects in Java? What is the difference between using double quotes and the new keyword?
+Answer:
+Using double quotes (String literal): String str1 = "hello"; This creates a String object in the String pool (if it doesn't already exist) and assigns its reference to str1.
+Using the new keyword: String str2 = new String("hello"); This always creates a new String object in the heap (not necessarily in the String pool), even if a String with the same value exists in the pool. The intern() method would need to be called on str2 to put it in the pool.
+str1 == "hello" would be true (reference comparison to the pool).
+str2 == "hello" would likely be false (different objects in memory).
+str1 == str2.intern() would be true (both references point to the same object in the pool).
+
+■ Question 10. What are some common methods of the String class in Java?
+Answer:
+	length()
+	charAt(int index)
+	substring(int beginIndex)
+	substring(int beginIndex, int endIndex)
+	equals(Object anObject)
+	equalsIgnoreCase(String anotherString)
+	compareTo(String anotherString)
+	compareToIgnoreCase(String str)   
+	concat(String str)
+	trim()
+	toLowerCase()
+	toUpperCase()
+	replace(char oldChar, char newChar)
+	replace(CharSequence target, CharSequence replacement)
+	replaceAll(String regex, String replacement)
+	split(String regex)   
+	startsWith(String prefix)
+	endsWith(String suffix)
+	indexOf(String str)
+	lastIndexOf(String str)
+	contains(CharSequence s)
+	isEmpty()
+	isBlank() (Java 11+)
+	valueOf(primitive) (static method to convert primitives to String)
+	intern()
+
+■ Question 11. Explain the difference between equals() and == when comparing String objects.
+Answer:
+== compares the object references (whether they point to the same object in memory).
+equals() (the method of the String class) compares the actual content of the String objects. You should generally use equals() to compare the values of strings.
+
+Question 12. What is the purpose of the intern() method of the String class?
+Answer:
+The intern() method returns a canonical representation of the String object.
+When intern() is called on a String, the JVM checks if a String with the same content exists in the String pool.
+If it exists, the reference to that pooled String is returned.
+If it doesn't exist, the current String object is added to the pool (in some JVM implementations, a copy is made), and a reference to the pooled String is returned.
+
+StringBuffer:
+
+■ Question 13. What is StringBuffer in Java? How does it differ from String?
+StringBuffer is a mutable sequence of characters. Unlike String, its content can be changed after creation.
+The primary difference is mutability. String is immutable, while StringBuffer is mutable.
+
+■ Question 14. Why and when would you use StringBuffer?
+You would use StringBuffer when you need to perform frequent modifications to a string, such as appending, inserting, deleting, or replacing characters. This avoids the creation of many intermediate String objects, which can be inefficient in terms of performance and memory usage.
+
+■ Question 15. Is StringBuffer thread-safe? Explain.
+Yes, StringBuffer is thread-safe. Its methods (like append(), insert(), delete(), etc.) are synchronized. This means that only one thread can access and modify a StringBuffer object at a time, preventing race conditions in multi-threaded environments.
+
+■ Question 16. What are some common methods of the StringBuffer class?
+append(String str) (and overloaded versions for other data types)
+insert(int offset, String str) (and overloaded versions)
+delete(int start, int end)
+deleteCharAt(int index)
+replace(int start, int end, String str)
+reverse()
+length()
+capacity()
+ensureCapacity(int minimumCapacity)
+charAt(int index)
+setCharAt(int index, char ch)
+substring(int start)
+substring(int start, int end)
+toString() (converts the StringBuffer to an immutable String object)
+
+■ Question 17. What is the initial capacity of a StringBuffer? How can you change it?
+The default initial capacity of a StringBuffer is 16 characters.
+You can specify the initial capacity when creating a StringBuffer object using the constructor: StringBuffer sb = new StringBuffer(32);.
+The ensureCapacity(int minimumCapacity) method can be used to increase the capacity if needed. The StringBuffer will automatically increase its capacity if you append more characters than it can currently hold.
